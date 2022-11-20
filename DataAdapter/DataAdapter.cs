@@ -53,6 +53,7 @@ public static class DataAdapter
         output.Add(row);
     }
 
+    command.Connection.Close();
     command.Dispose();
     return output;
   }
