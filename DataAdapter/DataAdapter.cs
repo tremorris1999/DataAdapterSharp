@@ -16,7 +16,7 @@ public static class DataAdapter
 
   public static void Configure(string filePath = "appsettings.json")
   {
-      JsonNode connections = JsonSerializer.Deserialize<JsonNode>(File.ReadAllText(filePath))?["connectionStrings"]
+      JsonNode connections = JsonSerializer.Deserialize<JsonNode>(File.ReadAllText(filePath))?["ConnectionStrings"]
         ?? throw new ApplicationException("Unable to load connection strings");
 
       foreach (var connection in connections.AsObject().AsEnumerable())
