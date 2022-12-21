@@ -7,26 +7,33 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 namespace DataAdapterSharp.DataAdapter;
 public static class DataAdapter
 {
   private static readonly Dictionary<string, string> ConnectionStrings = new();
   private static bool IsConfigured { get => ConnectionStrings.Any(); }
+  private static Mutex Lock = new();
 
   public static void Configure(string filePath = "appsettings.json")
   {
-      JsonNode connections = JsonSerializer.Deserialize<JsonNode>(File.ReadAllText(filePath))?["ConnectionStrings"]
-        ?? throw new ApplicationException("Unable to load connection strings");
+    JsonNode connections = JsonSerializer.Deserialize<JsonNode>(File.ReadAllText(filePath))?["ConnectionStrings"]
+      ?? throw new ApplicationException("Unable to load connection strings");
 
-      foreach (var connection in connections.AsObject().AsEnumerable())
+    foreach (var connection in connections.AsObject().AsEnumerable())
+    {
+      _ = Lock.WaitOne();
+      string? value = connection.Value?.GetValue<string>();
+      if (value is null || ConnectionStrings.ContainsKey(connection.Key))
       {
-        string? value = connection.Value?.GetValue<string>();
-        if (value is null)
-          continue;
-
-        ConnectionStrings.Add(connection.Key, value);
+        Lock.ReleaseMutex();
+        continue;
       }
+
+      ConnectionStrings.Add(connection.Key, value);
+      Lock.ReleaseMutex();
+    }
 
     if (!IsConfigured)
       throw new ApplicationException("No connections configured.");
