@@ -9,7 +9,7 @@ using System.Linq;
 using System.IO;
 using System.Threading;
 
-namespace DataAdapterSharp.DataAdapter;
+namespace TreMorrisDev.DataAdapterSharp.DataAdapter;
 public static class DataAdapter
 {
   private static readonly Dictionary<string, string> ConnectionStrings = new();

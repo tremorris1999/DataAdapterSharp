@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace DataAdapterSharp.DataAdapter;
+namespace TreMorrisDev.DataAdapterSharp.DataAdapter;
 
 public class TypeAdapter
 {
